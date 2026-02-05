@@ -47,16 +47,45 @@ class Tweet {
         if (this.source != 'completed_event') {
             return "unknown";
         }
-        //TODO: parse the activity type from the text of the tweet
-        return "";
+        //DONE: parse the activity type from the text of the tweet
+        //Checking for keywords
+        if (this.text.includes("run")) return "run";
+        if (this.text.includes("hike")) return "hike";
+        if (this.text.includes("walk")) return "walk";
+        if (this.text.includes("swim")) return "swim";
+        if (this.text.includes("bike")) return "bike";
+        if (this.text.includes("yoga")) return "yoga";
+
+        return "other";
     }
 
     get distance():number {
         if(this.source != 'completed_event') {
             return 0;
         }
-        //TODO: prase the distance from the text of the tweet
-        return 0;
+        //DONE: prase the distance from the text of the tweet
+        // Split text to find number
+        let parts = this.text.split(" ");
+        let distanceInMiles = 0;
+        
+        //Look for "km" and use the number before it
+        let kmIndex = parts.indexOf("km");
+        if (kmIndex > 0){
+            let kmValue = parseFloat(parts[kmIndex - 1]);
+            if (!isNaN(kmValue)){
+                distanceInMiles = kmValue / 1.609;
+            }
+        }
+
+        //Look for "mi" and the number before it
+        let miIndex = parts.indexOf("mi");
+        if (miIndex > 0){
+            let miValue = parseFloat(parts[miIndex - 1]);
+            if (!isNaN(miValue)){
+                distanceInMiles = miValue;
+            }
+        }
+        return distanceInMiles;
     }
 
     getHTMLTableRow(rowNumber:number):string {

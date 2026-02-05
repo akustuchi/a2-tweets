@@ -9,6 +9,45 @@ function parseTweets(runkeeper_tweets) {
 		return new Tweet(tweet.text, tweet.created_at);
 	});
 
+	//Create map to count frequencies
+	let activityCounts = {}; 
+
+	tweet_array.forEach(function(tweet) {
+		if (tweet.source === "completed_event") {
+			let type = tweet.activityType;
+			//Only count valid activities
+			if (type !== "unknown") {
+				if (activityCounts[type]) {
+					activityCounts[type]++;
+				} else {
+					activityCounts[type] = 1;
+				}
+			}
+		}
+	});
+
+	//Convert to array for sorting
+	let activityList = [];
+	for(let type in activityCounts){
+		activityList.push({type: type, count: activityCounts[type]});
+	}
+
+	//Sort
+	activityList.sort(function(a, b){
+		return b.count - a.count;
+	});
+
+	//Update HTML
+	//Count "Other" in the total number of types found
+	document.getElementById("numberActivities").innerText = activityList.length;
+
+	//List for the Top 3 (excluding "other")
+	let topActivities = activityList.filter(item => item.type !== "other");
+
+	document.getElementById("firstMost").innerText = topActivities[0].type;
+	document.getElementById("secondMost").innerText = topActivities[1].type;
+	document.getElementById("thirdMost").innerText = topActivities[2].type;
+
 	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
 
 	activity_vis_spec = {
