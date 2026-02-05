@@ -39,8 +39,15 @@ class Tweet {
         if(!this.written) {
             return "";
         }
-        //TODO: parse the written text from the tweet
-        return "";
+        //DONE: parse the written text from the tweet
+        let parts = this.text.split(" - ")
+        //If there is a dash, return user text after it
+        //Otherwise will return the whole text
+        if(parts.length > 1 ){
+            return parts[1];
+        } else {
+            return this.text;
+        }
     }
 
     get activityType():string {
@@ -89,7 +96,26 @@ class Tweet {
     }
 
     getHTMLTableRow(rowNumber:number):string {
-        //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
-        return "<tr></tr>";
+        //DONE: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
+        let words = this.text.split(" ");
+        
+        //Loop through each word to find the URL
+        let processedWords = words.map(word => {
+            //Check if the word looks like a link
+            if (word.startsWith("http")) {
+                //Return the clickable HTML link
+                return `<a href="${word}">${word}</a>`;
+            }
+            //Otherwise return the word as is
+            return word;
+        });
+
+        let linkedText = processedWords.join(" ");
+
+        return `<tr>
+            <td>${rowNumber}</td>
+            <td>${this.activityType}</td>
+            <td>${linkedText}</td>
+        </tr>`;
     }
 }
